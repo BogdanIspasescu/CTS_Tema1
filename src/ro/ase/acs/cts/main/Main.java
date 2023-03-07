@@ -3,6 +3,11 @@ package ro.ase.acs.cts.main;
 import ro.ase.acs.cts.classes.EmployeeDataInsertor;
 import ro.ase.acs.cts.classes.EmployeeReader;
 import ro.ase.acs.cts.classes.EmployeeTableCreator;
+import ro.ase.acs.cts.classes.SqliteConnectionManager;
+import ro.ase.acs.cts.interfaces.ConnectionManager;
+import ro.ase.acs.cts.interfaces.DataInsertor;
+import ro.ase.acs.cts.interfaces.DataReader;
+import ro.ase.acs.cts.interfaces.TableCreator;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -15,17 +20,17 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            Class.forName("org.sqlite.JDBC");
-            Connection connection = DriverManager.getConnection("jdbc:sqlite:database.db");
-            connection.setAutoCommit(false);
+            ConnectionManager connectionManager = new SqliteConnectionManager();
+            Connection connection = connectionManager.getConnection();
 
-            EmployeeTableCreator employeeTableCreator = new EmployeeTableCreator();
+
+            TableCreator employeeTableCreator = new EmployeeTableCreator();
             employeeTableCreator.createTable(connection);
 
-            EmployeeDataInsertor employeeDataInsertor = new EmployeeDataInsertor();
+            DataInsertor employeeDataInsertor = new EmployeeDataInsertor();
             employeeDataInsertor.inserData(connection);
 
-            EmployeeReader employeeReader = new EmployeeReader();
+            DataReader employeeReader = new EmployeeReader();
             employeeReader.readData(connection);
 
             connection.close();
@@ -33,5 +38,6 @@ public class Main {
             e.printStackTrace();
         }
     }
+
 
 }
